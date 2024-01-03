@@ -1,16 +1,16 @@
 package com.example.librarymoviesrestapi.entity;
 
-import com.example.librarymoviesrestapi.dto.MovieRequestDto;
+import com.example.librarymoviesrestapi.dto.MovieDto;
 
 public final class MovieMapper {
     private MovieMapper() {
     }
 
-    public static Movie convertMovieRequestDtoToMovie(final MovieRequestDto request) {
+    public static Movie convertMovieDtoToMovie(final MovieDto request) {
         return Movie.builder()
                 .title(request.getTitle())
-                .description(request.getDescription())
-                .filmGenre(request.getFilmGenre())
+                .description(request.getPlot())
+                .filmGenre(request.getGenre())
                 .director(request.getDirector())
                 .poster(request.getPoster())
                 .build();
