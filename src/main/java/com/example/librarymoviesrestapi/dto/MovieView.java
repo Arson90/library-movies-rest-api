@@ -1,6 +1,6 @@
 package com.example.librarymoviesrestapi.dto;
 
-public interface MovieRequestView {
+public interface MovieView {
     Long getId();
     String getTitle();
     String getDescription();
