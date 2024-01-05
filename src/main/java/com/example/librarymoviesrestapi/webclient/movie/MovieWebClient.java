@@ -1,10 +1,12 @@
 package com.example.librarymoviesrestapi.webclient.movie;
 
 import com.example.librarymoviesrestapi.dto.MovieDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
+@Slf4j
 public class MovieWebClient {
     private static final String MOVIE_URL = "http://www.omdbapi.com/";
     private static final String API_KEY = "a8de39b0";
@@ -23,6 +25,7 @@ public class MovieWebClient {
     }
 
     private <T> T getRequest(final String url, Class<T> responseType, Object... objects) {
+        log.info("Calling webservice with url: " + MOVIE_URL + url);
         return restTemplate.getForObject(MOVIE_URL + url, responseType, objects);
     }
 }
