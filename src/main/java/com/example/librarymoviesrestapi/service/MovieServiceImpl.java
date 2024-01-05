@@ -24,7 +24,7 @@ public class MovieServiceImpl implements MovieService{
     @Override
     public MovieDto getMovieById(final String imdbID) {
         final MovieDto movieDto = this.movieWebClient.getRequestForMovieId(imdbID);
-        //I assume if there is no title then movie doesn't exists, because probably this filed should be required.
+        //I assume if there is no title then movie doesn't exists
         if (movieDto.getTitle() == null) {
             throw MovieNotFoundException.createForMovieId(imdbID);
         }
@@ -34,7 +34,7 @@ public class MovieServiceImpl implements MovieService{
     @Override
     public MovieDto getMovieByTitle(final String title) {
         final MovieDto movieDto = this.movieWebClient.getRequestForMovieTitle(title);
-        //I assume if there is no title then movie doesn't exists, because probably this filed should be required.
+        //I assume if there is no title then movie doesn't exists
         if (movieDto.getTitle() == null) {
             throw MovieNotFoundException.createForMovieTitle(title);
         }
