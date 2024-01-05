@@ -8,6 +8,7 @@ import com.example.librarymoviesrestapi.exception.MovieNotFoundException;
 import com.example.librarymoviesrestapi.repository.MovieCommandRepository;
 import com.example.librarymoviesrestapi.repository.MovieQueryRepository;
 import com.example.librarymoviesrestapi.webclient.movie.MovieWebClient;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,6 +26,8 @@ class MovieServiceImplTest {
     private final String INVALID_IMDB_ID = "0001";
     private final String VALID_IMDB_ID = "tt0120338";
     private final String VALID_TITLE = "Titanic";
+    private MovieDto movieDto;
+    private Movie movie;
 
     @Mock
     private MovieWebClient webClient;
@@ -35,13 +38,25 @@ class MovieServiceImplTest {
     @InjectMocks
     private MovieServiceImpl movieService;
 
+    @BeforeEach
+    void init() {
+        this.movieDto = MovieDto.builder()
+                .title("Titanic")
+                .plot("Plot")
+                .genre("Genre")
+                .director("Director")
+                .poster("Poster")
+                .build();
+        this.movie = MovieMapper.convertMovieDtoToMovie(movieDto);
+    }
+
     @Test
     void givenInvalidImdbId_whenGetRequestIsCalled_shouldInvokedMovieNotFoundException() {
         //GIVEN
-        final MovieDto movieDto = new MovieDto();
+        final MovieDto emptyMovieDto = new MovieDto();
 
         //WHEN
-        Mockito.lenient().when(this.webClient.getRequestForMovieId(INVALID_IMDB_ID)).thenReturn(movieDto);
+        Mockito.lenient().when(this.webClient.getRequestForMovieId(INVALID_IMDB_ID)).thenReturn(emptyMovieDto);
 
         //THEN
         assertThrows(MovieNotFoundException.class, () -> this.movieService.getMovieById(INVALID_IMDB_ID));
@@ -49,15 +64,6 @@ class MovieServiceImplTest {
 
     @Test
     void givenValidTitle_whenGetRequestIsCalled_shouldReturnTheSameTitle() {
-        //GIVEN
-        final MovieDto movieDto = MovieDto.builder()
-                .title("Titanic")
-                .plot("Plot")
-                .genre("Genre")
-                .director("Director")
-                .poster("Poster")
-                .build();
-
         //WHEN
         Mockito.lenient().when(this.webClient.getRequestForMovieTitle(VALID_TITLE)).thenReturn(movieDto);
         final MovieDto result = this.movieService.getMovieByTitle(movieDto.getTitle());
@@ -68,16 +74,6 @@ class MovieServiceImplTest {
 
     @Test
     void givenMovie_whenTryToSave_shouldInvokedSaveMethod() {
-        //GIVEN
-        final MovieDto movieDto = MovieDto.builder()
-                .title("Titanic")
-                .plot("Plot")
-                .genre("Genre")
-                .director("Director")
-                .poster("Poster")
-                .build();
-        final Movie movie = MovieMapper.convertMovieDtoToMovie(movieDto);
-
         //WHEN
         Mockito.lenient().when(this.webClient.getRequestForMovieId(VALID_IMDB_ID)).thenReturn(movieDto);
         Mockito.lenient().when(this.queryRepository.findMovieByTitle(movieDto.getTitle())).thenReturn(Optional.empty());
@@ -90,16 +86,6 @@ class MovieServiceImplTest {
 
     @Test
     void givenExistsMovie_whenTryToSave_shouldInvokedMovieAlreadyExistsException() {
-        //GIVEN
-        final MovieDto movieDto = MovieDto.builder()
-                .title("Titanic")
-                .plot("Plot")
-                .genre("Genre")
-                .director("Director")
-                .poster("Poster")
-                .build();
-        final Movie movie = MovieMapper.convertMovieDtoToMovie(movieDto);
-
         //WHEN
         Mockito.lenient().when(this.webClient.getRequestForMovieId(VALID_IMDB_ID)).thenReturn(movieDto);
         Mockito.lenient().when(this.queryRepository.findMovieByTitle(movieDto.getTitle())).thenReturn(Optional.ofNullable(movie));
